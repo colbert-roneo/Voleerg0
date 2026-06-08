@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
+import FileUpload from '../components/FileUpload';
 
 const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -49,14 +50,7 @@ const Profile = () => {
     }
   };
 
-  const handleResumeUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      return toast.error('File too large. Max 5MB allowed.');
-    }
-
+  const handleResumeUpload = async (file) => {
     setUploading(true);
     const formData = new FormData();
     formData.append('resume', file);
@@ -100,7 +94,7 @@ const Profile = () => {
             <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '16px' }}>📄 Resume</h3>
             
             {user?.resume && (
-              <div className="flex-between" style={{ marginBottom: '16px', padding: '12px', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)' }}>
+              <div className="flex-between" style={{ marginBottom: '16px', padding: '12px', background: 'var(--bg-input)', borderRadius: 'var(--radius-md)', alignItems: 'center' }}>
                 <span style={{ color: 'var(--success)' }}>✅ Resume uploaded</span>
                 <a 
                   href={`${API_BASE}${user.resume}`} 
@@ -113,18 +107,17 @@ const Profile = () => {
               </div>
             )}
 
-            <label className="btn btn-secondary" style={{ cursor: 'pointer', width: '100%', textAlign: 'center' }}>
-              <input
-                type="file"
-                accept=".pdf,.doc,.docx"
-                onChange={handleResumeUpload}
-                style={{ display: 'none' }}
+            {uploading ? (
+              <div style={{ textAlign: 'center', padding: '24px' }}>
+                <div className="spinner" style={{ margin: '0 auto 16px', width: '32px', height: '32px' }} />
+                <p>Uploading resume...</p>
+              </div>
+            ) : (
+              <FileUpload 
+                onUpload={handleResumeUpload} 
+                currentFile={user?.resume} 
               />
-              {uploading ? 'Uploading...' : user?.resume ? '🔄 Replace Resume' : '📤 Upload Resume'}
-            </label>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '8px', textAlign: 'center' }}>
-              Accepted: PDF, DOC, DOCX (max 5MB)
-            </p>
+            )}
           </div>
         )}
 
@@ -173,3 +166,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

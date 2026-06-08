@@ -22,7 +22,7 @@ const Navbar = () => {
       <div className="container">
         <Link to="/" className="navbar-brand">
           <span className="brand-icon">⚡</span>
-          Voleergo
+          JOBZ
         </Link>
 
         <button className="mobile-menu-btn" onClick={() => setMobileOpen(!mobileOpen)}>
